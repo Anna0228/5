@@ -6,60 +6,47 @@ namespace _5
     {
         static void Main(string[] args)
         {
-            
+            IComputerState state = new TurnOffComputerState();
+            Computer computer = new(state);
+            computer.PressButton(); //Turning on
+            computer.PressButton(); //Turning off
         }
-        public class Computer
+    }
+
+    public class Computer
+    {
+        public IComputerState State { get; set; }
+
+        public Computer(IComputerState cs)
         {
-            public IComputerState State { get; set; }
-
-            public Computer(IComputerState cs)
-            {
-                State = cs;
-            }
-
-            public void TurnOn()
-            {
-                State.TurnOn(this);
-            }
-            public void TurnOff()
-            {
-                State.TurnOff(this);
-            }
+            State = cs;
         }
 
-        public interface IComputerState
+        public void PressButton()
         {
-            void TurnOn(Computer computer);
-            void TurnOff(Computer computer);
+            State.ChangeComputerState(this);
         }
+    }
 
-        public class TurnOnComputerState : IComputerState
+    public interface IComputerState
+    {
+        void ChangeComputerState(Computer computer);
+    }
+
+    public class TurnOnComputerState : IComputerState
+    {
+        public void ChangeComputerState(Computer computer)
         {
-            public void TurnOn(Computer computer)
-            {
-                Console.WriteLine("Превращаем лед в жидкость");
-                computer.State = new TurnOffComputerState();
-            }
-
-            public void TurnOff(Computer computer)
-            {
-                Console.WriteLine("Продолжаем заморозку льда");
-            }
+            Console.WriteLine("Computer is turning off.");
+            computer.State = new TurnOffComputerState();
         }
-        public class TurnOffComputerState : IComputerState
+    }
+    public class TurnOffComputerState : IComputerState
+    {
+        public void ChangeComputerState(Computer computer)
         {
-            public void TurnOn(Computer computer)
-            {
-                Console.WriteLine("Превращаем жидкость в пар");
-                computer.State = new TurnOnComputerState();
-            }
-
-            public void TurnOff(Computer computer)
-            {
-                Console.WriteLine("Превращаем жидкость в лед");
-                computer.State = new TurnOffComputerState();
-            }
+            Console.WriteLine("Computer is turning on.");
+            computer.State = new TurnOnComputerState();
         }
-        
     }
 }
